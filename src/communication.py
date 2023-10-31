@@ -20,9 +20,10 @@ class Communication(Thread):
 
     @property
     def host(self):
-        if self._host == None:
-            hostname = socket.gethostname()
+        if self._host == None or self._host =="pi":
+            hostname = socket.gethostname() + ".local"
             self._host = socket.gethostbyname(hostname)
+
         return self._host
     
     @property
@@ -71,7 +72,7 @@ class Node (Communication):
         super().__init__(host, port)
 
     def ClientSetup(self,targethost:str, targetport:int):
-        '''ClientSetup attempts to send message to a receving party. Returns socket if sucessful else False.
+        '''ClientSetup attempts to send message to a receiving party. Returns socket if successful else False.
         targethost: Target IP address
         targetport: Target port address'''
 
@@ -107,7 +108,7 @@ class Node (Communication):
                 s = self.ClientSetup(destination[0], destination[1]) # attempt to connect to target
                 
                 if s:
-                    # Succesful connection
+                    # Successful connection
                     try:
                         s.settimeout(None) # set timeout to None, anticipating large packets
                         s.send(str(len(frame)).encode())
@@ -129,7 +130,7 @@ class Node (Communication):
 
     ### INCOMING ###
     def ServerSetup(self):
-        '''ServerSetup. This is where the machine recieves packets. While running, it is waiting for a connection'''
+        '''ServerSetup. This is where the machine receives packets. While running, it is waiting for a connection'''
         
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM) # Create a socket
         try:
@@ -146,7 +147,7 @@ class Node (Communication):
         """
         < packet size
         > okay
-        repeat till all packs recieved:
+        repeat till all packs received:
             < packets
             > okay
 
@@ -207,7 +208,7 @@ class Node (Communication):
 class multicastNode(Communication):
     def __init__(self, host: str = None, port: int = 55555, mode = "R" , MCAST_GRP = "127.0.0.1", MCAST_PORT = 55588) -> None:
         """
-        R - reciever
+        R - receiver
         B - multicasterer
         """
         super().__init__(host, port)
@@ -285,7 +286,7 @@ class multicastNode(Communication):
 
         self.threads.append(outgoing_thread)
 
-    def reciever(self):
+    def receiver(self):
         print(f"\033[1mNode : Tunning In \033[0m")
         incoming_thread  = Thread(target= self.pull)
 
@@ -298,7 +299,7 @@ class multicastNode(Communication):
         print ("Starting...")
         try:
             if self.mode =="R":
-                self.reciever()
+                self.receiver()
         
             elif self.mode == "B":
                 self.multicaster()

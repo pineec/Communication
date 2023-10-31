@@ -20,7 +20,7 @@ class Communication(Thread):
 
     @property
     def host(self):
-        if self._host == None or self._host =="pi":
+        if self._host == None:
             hostname = socket.gethostname() + ".local"
             self._host = socket.gethostbyname(hostname)
 

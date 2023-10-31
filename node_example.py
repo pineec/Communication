@@ -1,6 +1,6 @@
 from src.communication import Node
 import time
-a = Node(host="pi", port = 55566)
+a = Node(port = 55566)
 b = Node(port = 55588)
 
 a.Start()
